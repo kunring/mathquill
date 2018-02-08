@@ -1163,7 +1163,7 @@ Environments.matrix = P(Environment, function(_, super_) {
     // Insert the new row
     this.jQ.find('tr').eq(row).after(newRow);
     this.blocks = previous.concat(newCells, next);
-    return newCells[column];
+    return newCells[(row + 1) * columns];
   };
   _.addColumn = function(afterCell) {
     var rows = [], newCells = [];
@@ -1289,11 +1289,11 @@ var MatrixCell = P(MathBlock, function(_, super_) {
   };
   _.keystroke = function(key, e, ctrlr) {
     switch (key) {
-    case 'Shift-Spacebar':
+    case 'Tab':
       e.preventDefault();
       return this.parent.insert('addColumn', this);
       break;
-    case 'Shift-Enter':
+    case 'Enter':
       e.preventDefault();
       return this.parent.insert('addRow', this);
       break;
