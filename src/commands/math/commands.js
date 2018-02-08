@@ -1289,11 +1289,11 @@ var MatrixCell = P(MathBlock, function(_, super_) {
   };
   _.keystroke = function(key, e, ctrlr) {
     switch (key) {
-    case 'Shift-Spacebar':
+    case 'Tab':
       e.preventDefault();
       return this.parent.insert('addColumn', this);
       break;
-    case 'Shift-Enter':
+    case 'Enter':
       e.preventDefault();
       return this.parent.insert('addRow', this);
       break;
