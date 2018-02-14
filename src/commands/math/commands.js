@@ -425,6 +425,57 @@ LatexCmds.integral = P(SummationNotation, function(_, super_) {
   _.createLeftOf = MathCommand.p.createLeftOf;
 });
 
+LatexCmds.bigg = // HACK FIXME
+LatexCmds.intsub =
+LatexCmds.integralsubstitution = P(SummationNotation, function(_, super_) {
+  _.init = function() {
+    var htmlTemplate =
+      '<span class="mq-intsub mq-non-leaf">'
+    +   '<big>/</big>'
+    +   '<span class="mq-supsub mq-non-leaf">'
+    +     '<span class="mq-sup"><span class="mq-sup-inner">&1</span></span>'
+    +     '<span class="mq-sub">&0</span>'
+    +     '<span style="display:inline-block;width:0">&#8203</span>'
+    +   '</span>'
+    + '</span>'
+    ;
+    Symbol.prototype.init.call(this, '\\bigg', htmlTemplate);
+  };
+  // FIXME: refactor rather than overriding
+  _.createLeftOf = MathCommand.p.createLeftOf;
+  _.parser = function() {
+    var self = this;
+    var string = Parser.string;
+    var optWhitespace = Parser.optWhitespace;
+    var succeed = Parser.succeed;
+    self.blocks = [];
+
+    return string('/_{\\!\\!\\!\\!\\!')
+      .then(latexMathParser)
+      .then(function(block) {
+        self.blocks.push(block);
+        return succeed(self);
+      })
+      .then(optWhitespace)
+      .then(string('}'))
+      .then(optWhitespace)
+      .then(string('^'))
+      .then(latexMathParser.block)
+      .then(function(block) {
+        self.blocks.push(block);
+        return succeed(self);
+      })
+    ;
+  };
+  _.latex = function() {
+    function simplify(latex) {
+      return latex.length === 1 ? latex : '{' + (latex || ' ') + '}';
+    }
+    return '\\bigg/_{\\!\\!\\!\\!\\!' + simplify(this.blocks[0].latex()) +
+      '}^' + simplify(this.blocks[1].latex());
+  };
+});
+
 var Fraction =
 LatexCmds.frac =
 LatexCmds.dfrac =
