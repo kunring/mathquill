@@ -70,6 +70,7 @@ var latexMathParser = (function() {
 
   latexMath.block = mathBlock;
   latexMath.optBlock = optMathBlock;
+  latexMath.joinBlocks = joinBlocks;
   return latexMath;
 })();
 
