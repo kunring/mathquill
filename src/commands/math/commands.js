@@ -165,6 +165,26 @@ LatexCmds.underrightarrow = bind(OverUnderArrow, '\\underrightarrow', 'class="mq
 LatexCmds.underleftarrow = bind(OverUnderArrow, '\\underleftarrow', 'class="mq-non-leaf mq-underarrow mq-arrow-left"');
 LatexCmds.underleftrightarrow = bind(OverUnderArrow, '\\underleftrightarrow', 'class="mq-non-leaf mq-underarrow mq-arrow-leftright"');
 
+LatexCmds.xrightleftharpoons = P(MathCommand, function(_, super_) {
+  _.init = function() {
+    super_.init.call(this, '\\xrightleftharpoons', '<span class="mq-harpoons mq-harpoons-rightleft mq-non-leaf">'
+                     +   '<span class="mq-harpoons-nominator">&0</span>'
+                     +   '<span class="mq-harpoons-harpoons">&#x21cc;</span>'
+                     +   '<span class="mq-harpoons-harpoons-helper">&#x21cc;</span>'
+    +   '<span class="mq-harpoons-denominator">&1</span>'
+    + '</span>');
+  }
+
+  _.reflow = function() {
+    var outerBlock = this.jQ.children(':first')
+    var harpoonsHelper = this.jQ.find('.mq-harpoons-harpoons-helper');
+    var harpoons = this.jQ.find('.mq-harpoons-harpoons');
+
+    scale(harpoons, outerBlock.outerWidth() / harpoonsHelper.outerWidth(), 1)
+    }
+
+});
+
 LatexCmds.overarc = bind(Style, '\\overarc', 'span', 'class="mq-non-leaf mq-overarc"');
 LatexCmds.dot = P(MathCommand, function(_, super_) {
     _.init = function() {
