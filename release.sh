@@ -1,27 +1,22 @@
 #!/bin/bash
+set -e
 
 if [ $# -ne 1 ]; then
-    echo "Provide version as the first argument."
+    echo "Provide version as the first argument (patch, minor, major etc.)"
     exit 2
 fi
 
 VERSION=$1
 
-git ls-remote --tags 2>/dev/null | grep "refs/tags/$VERSION$" 1>/dev/null
+# Publish NPM package
+yarn publish "--$VERSION"
+git push --follow-tags
 
-if [ $? -eq 0 ] || [ $(git tag -l "$VERSION") ]; then
-    echo "Tag '$VERSION' already exists."
-    exit 1
-fi
-
-set -e
+# Publish gh-pages
 git checkout gh-pages
 git reset --hard master
-make
 git add -f build
-git commit -m "Add distributable files for version $VERSION"
-git tag "$VERSION"
-git push --force-with-lease
-git push --tags
+git commit -m "Add distributable files for latest version"
+git push -f
 git checkout -
-echo "Created and pushed the version tag '$VERSION'."
+
