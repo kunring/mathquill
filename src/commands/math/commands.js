@@ -693,7 +693,7 @@ var Hat = LatexCmds.hat = P(MathCommand, function(_, super_) {
 var NthRoot =
 LatexCmds.nthroot = P(SquareRoot, function(_, super_) {
   _.htmlTemplate =
-      '<sup class="mq-nthroot mq-non-leaf">&0</sup>'
+      '<span class="mq-nthroot mq-non-leaf">&0</span>'
     + '<span class="mq-scaled">'
     +   '<span class="mq-sqrt-prefix mq-scaled">&radic;</span>'
     +   '<span class="mq-sqrt-stem mq-non-leaf">&1</span>'
