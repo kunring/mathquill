@@ -8,6 +8,7 @@ fi
 
 VERSION=$1
 
+make
 # Publish NPM package
 yarn publish "--$VERSION"
 git push --follow-tags
