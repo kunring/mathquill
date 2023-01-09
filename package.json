@@ -1,7 +1,7 @@
 {
   "name": "@digabi/mathquill",
   "description": "Easily type math in your webapp",
-  "version": "0.10.6",
+  "version": "0.10.11",
   "license": "MPL-2.0",
   "main": "build/mathquill.js",
   "repository": {
@@ -13,9 +13,6 @@
     "build/fonts/Symbola.*",
     "quickstart.html"
   ],
-  "scripts": {
-    "prepublishOnly": "make"
-  },
   "dependencies": {
     "jquery": "^3.3.1"
   },
