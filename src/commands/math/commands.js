@@ -146,7 +146,8 @@ LatexCmds.mathbb = P(MathCommand, function(_, super_) {
 
 //text-decoration
 LatexCmds.underline = bind(Style, '\\underline', 'span', 'class="mq-non-leaf mq-underline"');
-LatexCmds.overline = LatexCmds.bar = bind(Style, '\\overline', 'span', 'class="mq-non-leaf mq-overline"');
+LatexCmds.bar = bind(Style, '\\bar', 'span', 'class="mq-non-leaf mq-overline"');
+LatexCmds.overline = bind(Style, '\\overline', 'span', 'class="mq-non-leaf mq-overline"');
 
 var OverUnderArrow = P(MathCommand, function(_, super_) {
   _.init = function(ctrlSeq, attrs) {
