@@ -23,6 +23,17 @@ suite('latex', function() {
     assertParsesLatex('PNZQRCH');
   });
 
+  test('can parse mathbb symbols', function() {
+    assertParsesLatex('\\P\\N\\Z\\Q\\R\\C\\H',
+        '\\mathbb{P}\\mathbb{N}\\mathbb{Z}\\mathbb{Q}\\mathbb{R}\\mathbb{C}\\mathbb{H}');
+    assertParsesLatex('\\mathbb{P}\\mathbb{N}\\mathbb{Z}\\mathbb{Q}\\mathbb{R}\\mathbb{C}\\mathbb{H}');
+  });
+
+  test('can parse mathbb error case', function() {
+    assert.throws(function() { assertParsesLatex('\\mathbb + 2'); });
+    assert.throws(function() { assertParsesLatex('\\mathbb{A}'); });
+  });
+
   test('simple exponent', function() {
     assertParsesLatex('x^n');
   });
@@ -85,7 +96,7 @@ suite('latex', function() {
     assert.equal(tree.join('latex'), '\\left(123\\right)');
   });
 
-  test('langle/rangle (issue #508)', function() {
+  test('\\langle/\\rangle (issue #508)', function() {
     var tree = latexMathParser.parse('\\left\\langle 123\\right\\rangle)');
 
     assert.ok(tree.ends[L] instanceof Bracket);
@@ -94,13 +105,43 @@ suite('latex', function() {
     assert.equal(tree.join('latex'), '\\left\\langle 123\\right\\rangle )');
   });
 
-  test('lVert/rVert', function() {
+  test('\\langle/\\rangle (without whitespace)', function() {
+    var tree = latexMathParser.parse('\\left\\langle123\\right\\rangle)');
+
+    assert.ok(tree.ends[L] instanceof Bracket);
+    var contents = tree.ends[L].ends[L].join('latex');
+    assert.equal(contents, '123');
+    assert.equal(tree.join('latex'), '\\left\\langle 123\\right\\rangle )');
+  });
+
+  test('\\lVert/\\rVert', function() {
     var tree = latexMathParser.parse('\\left\\lVert 123\\right\\rVert)');
 
     assert.ok(tree.ends[L] instanceof Bracket);
     var contents = tree.ends[L].ends[L].join('latex');
     assert.equal(contents, '123');
     assert.equal(tree.join('latex'), '\\left\\lVert 123\\right\\rVert )');
+  });
+
+  test('\\lVert/\\rVert (without whitespace)', function() {
+    var tree = latexMathParser.parse('\\left\\lVert123\\right\\rVert)');
+
+    assert.ok(tree.ends[L] instanceof Bracket);
+    var contents = tree.ends[L].ends[L].join('latex');
+    assert.equal(contents, '123');
+    assert.equal(tree.join('latex'), '\\left\\lVert 123\\right\\rVert )');
+  });
+
+  test('\\langler should not parse', function() {
+    assert.throws(function () {
+      latexMathParser.parse('\\left\\langler123\\right\\rangler');
+    })
+  });
+
+  test('\\lVerte should not parse', function() {
+    assert.throws(function () {
+      latexMathParser.parse('\\left\\lVerte123\\right\\rVerte');
+    })
   });
 
   test('parens with whitespace', function() {
@@ -320,6 +361,34 @@ suite('latex', function() {
       base.latex('10');
       exp.latex('8');
       assert.equal(outer.latex(), '1.2345\\cdot10^8');
+    });
+
+    test('make inner field static and then editable', function() {
+      outer.latex('y=\\MathQuillMathField[m]{\\textcolor{blue}{m}}x+\\MathQuillMathField[b]{b}');
+      assert.equal(outer.innerFields.length, 2);
+      // assert.equal(outer.innerFields.m.__controller.container, false);
+
+      outer.innerFields.m.makeStatic();
+      assert.equal(outer.innerFields.m.__controller.editable, false);
+      assert.equal(outer.innerFields.m.__controller.container.hasClass('mq-editable-field'), false);
+      assert.equal(outer.innerFields.b.__controller.editable, true);
+
+      //ensure no errors in making static field static
+      outer.innerFields.m.makeStatic();
+      assert.equal(outer.innerFields.m.__controller.editable, false);
+      assert.equal(outer.innerFields.m.__controller.container.hasClass('mq-editable-field'), false);
+      assert.equal(outer.innerFields.b.__controller.editable, true);
+
+      outer.innerFields.m.makeEditable();
+      assert.equal(outer.innerFields.m.__controller.editable, true);
+      assert.equal(outer.innerFields.m.__controller.container.hasClass('mq-editable-field'), true);
+      assert.equal(outer.innerFields.b.__controller.editable, true);
+
+      //ensure no errors with making editable field editable
+      outer.innerFields.m.makeEditable();
+      assert.equal(outer.innerFields.m.__controller.editable, true);
+      assert.equal(outer.innerFields.m.__controller.container.hasClass('mq-editable-field'), true);
+      assert.equal(outer.innerFields.b.__controller.editable, true);
     });
 
     test('separate API object', function() {
